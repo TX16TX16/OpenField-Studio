@@ -12,6 +12,7 @@ project "Walnut"
       "../vendor/imgui",
       "../vendor/glfw/include",
       "../vendor/stb_image",
+      "../vendor/yaml-cpp",
 
       "%{IncludeDir.VulkanSDK}",
       "%{IncludeDir.glm}",
@@ -21,6 +22,7 @@ project "Walnut"
    {
        "ImGui",
        "GLFW",
+       "yaml-cpp",
 
        "%{Library.Vulkan}",
    }
