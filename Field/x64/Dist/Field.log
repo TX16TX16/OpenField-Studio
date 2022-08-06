@@ -1,12 +1,2 @@
-﻿  Field.cpp
-G:\Project Folder\OpenField\Field\src\Field.cpp(296,51): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-G:\Project Folder\OpenField\Field\src\Field.cpp(297,51): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-G:\Project Folder\OpenField\Field\src\Field.cpp(299,29): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-G:\Project Folder\OpenField\Field\src\Field.cpp(300,29): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-G:\Project Folder\OpenField\Field\src\Field.cpp(333,45): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-G:\Project Folder\OpenField\Field\src\Field.cpp(346,22): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-G:\Project Folder\OpenField\Field\src\Field.cpp(359,22): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-G:\Project Folder\OpenField\Field\src\Field.cpp(360,22): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-  Loader.cpp
-  Saver.cpp
+﻿  Loader.cpp
   Field.vcxproj -> G:\Project Folder\OpenField\x64\Dist\Field.lib

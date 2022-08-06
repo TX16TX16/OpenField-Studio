@@ -57,7 +57,6 @@ bool Filer::ContainsT(std::string Type,int Num)
 
 	std::ifstream f("default.json");
 	json data = json::parse(f);
-
 	int out = data[fType].contains(Number);
 	return out;
 }
