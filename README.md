@@ -19,6 +19,7 @@ Once you've cloned, run `scripts/Setup.bat` to generate Visual Studio 2022 solut
 - [GLFW](https://github.com/glfw/glfw)
 - [stb_image](https://github.com/nothings/stb)
 - [GLM](https://github.com/g-truc/glm) (included for convenience)
+- [Nlohmann Json](https://github.com/nlohmann/json) (nuget pakage used)
 
 ### Additional
 - Walnut uses the [Roboto](https://fonts.google.com/specimen/Roboto) font ([Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0))
