@@ -1,6 +1,6 @@
 # OpenField
 
-OpenField (Soon to be FreeField, Maybe) is modular drill design software made for all types of bands.
+FreeField (Was OpenField, hence file names) is modular drill design software made for all types of bands.
 
 **Don't expect much of this project as it is in early development.**
 
@@ -19,7 +19,7 @@ Once you've cloned, run `scripts/Setup.bat` to generate Visual Studio 2022 solut
 - [GLFW](https://github.com/glfw/glfw)
 - [stb_image](https://github.com/nothings/stb)
 - [GLM](https://github.com/g-truc/glm) (included for convenience)
-- [Nlohmann Json](https://github.com/nlohmann/json) (nuget pakage used)
+- [Nlohmann Json](https://github.com/nlohmann/json) (nuget package used)
 
 ### Additional
 - Walnut uses the [Roboto](https://fonts.google.com/specimen/Roboto) font ([Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0))
