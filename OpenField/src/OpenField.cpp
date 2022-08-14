@@ -26,7 +26,10 @@ public:
 
 		
 		Field::ShowMainWindow();
-		
+		Field::ShowToolsWindow();
+		Field::ShowInfoWindow();
+
+		ImGui::ShowDemoWindow();
 
 	}
 };
@@ -37,7 +40,7 @@ Walnut::Application* Walnut::CreateApplication(int argc, char** argv)
 	Walnut::ApplicationSpecification spec;
 	spec.Name = "Open Field";
 
-	Filer::Save();
+	Filer::IntDef();
 	
 
 	Walnut::Application* app = new Walnut::Application(spec);

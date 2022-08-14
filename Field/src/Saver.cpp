@@ -4,13 +4,10 @@
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
 
-#include <iostream>
-#include <fstream>
-
 
 using namespace std;
 
-void Filer::Save() {
+void Filer::IntDef() {
 	
 	// create an empty structure (null)
 	json j;

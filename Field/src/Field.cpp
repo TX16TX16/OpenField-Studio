@@ -221,6 +221,9 @@ void Field::ShowMainWindow(bool* p_open)
     static bool opt_enable_grid = true;
     static bool opt_enable_context_menu = true;
 
+    ImVec2 mouseGridCoord = ImGui::GetMousePos();
+
+    int testg = 5;
     // Put UI Elements Here
 
     
@@ -231,8 +234,8 @@ void Field::ShowMainWindow(bool* p_open)
 
     // This is the aspect ratio 16 = x, 9 = y for a 16:9 ratio
     ImVec2 gridRatio;
-    gridRatio.x = 20;
-    gridRatio.y = 10;
+    gridRatio.x = 17.6;
+    gridRatio.y = 9.2;
 
     if (availSpace.x < 400.0f) 
         availSpace.x = 400.0f;
@@ -306,6 +309,12 @@ void Field::ShowMainWindow(bool* p_open)
         draw_list->AddLine(Linep1, Linep2, IM_COL32(255, 255, 255, 255), th);
     };
 
+    auto DotDraw = [draw_list, windowCenterX, windowCenterY, gridSpacer](int x1, int y1, float rd, int sg)
+    {
+        ImVec2 Circlep1 = ImVec2(windowCenterX + (gridSpacer * x1), windowCenterY + ((gridSpacer * -1) * y1));
+        float Radiusp1 = (rd * gridSpacer);
+        draw_list->AddCircleFilled(Circlep1, Radiusp1, IM_COL32(255, 0, 0, 255), sg);
+    };
 
     //For vh variable 0 is vertical lines and 1 is horizontal
     auto HashDraw = [draw_list, windowCenterX, windowCenterY, gridSpacer](int x1, int y1, int x2, int y2,float sp, float th,int vh)
@@ -326,7 +335,6 @@ void Field::ShowMainWindow(bool* p_open)
             }
     };
 
-
     auto TextDraw = [draw_list, windowCenterX, windowCenterY, gridSpacer](int x, int y,const char * text)
     {
         ImVec2 Textp1 = ImVec2(windowCenterX + (gridSpacer * x), windowCenterY + ((gridSpacer * -1) * y));
@@ -335,13 +343,22 @@ void Field::ShowMainWindow(bool* p_open)
         ImGui::SetWindowFontScale(1);
     };
 
-    //DrawText(draw_list, windowCenterX, windowCenterY, gridSpacer, -2, 0, "50");
+    if (opt_enable_grid)
+    {
+        const float GRID_STEP = gridSpacer;
+        for (float x = fmodf(scrolling.x, GRID_STEP); x < availSpace.x; x += GRID_STEP)
+            draw_list->AddLine(ImVec2(gridPoint0.x + x, gridPoint0.y), ImVec2(gridPoint0.x + x, gridPoint1.y), IM_COL32(200, 200, 200, 40));
+            
+
+        for (float y = fmodf(scrolling.y, GRID_STEP); y < availSpace.y; y += GRID_STEP)
+            draw_list->AddLine(ImVec2(gridPoint0.x, gridPoint0.y + y), ImVec2(gridPoint1.x, gridPoint0.y + y), IM_COL32(200, 200, 200, 40));
+    }
 
     
-    
-    for (int l = 1; l <= 100; l += 1) 
+
+    for (int l = 1; l <= 100; l += 1)
     {
-        if (Filer::ContainsT("L", l)) 
+        if (Filer::ContainsT("L", l))
         {
             float th = Filer::LoadN("L", l, "th");
             int x1 = Filer::LoadN("L", l, "x1");
@@ -351,7 +368,7 @@ void Field::ShowMainWindow(bool* p_open)
             LineDraw(x1, y1, x2, y2, th);
         }
     }
-        
+
     for (int h = 1; h <= 100; h += 1)
     {
         if (Filer::ContainsT("H", h))
@@ -378,22 +395,8 @@ void Field::ShowMainWindow(bool* p_open)
             TextDraw(x, y, t2);
         }
     }
-    
-    
 
-
-    if (opt_enable_grid)
-    {
-        const float GRID_STEP = gridSpacer;
-        for (float x = fmodf(scrolling.x, GRID_STEP); x < availSpace.x; x += GRID_STEP)
-            draw_list->AddLine(ImVec2(gridPoint0.x + x, gridPoint0.y), ImVec2(gridPoint0.x + x, gridPoint1.y), IM_COL32(200, 200, 200, 40));
-            
-
-        for (float y = fmodf(scrolling.y, GRID_STEP); y < availSpace.y; y += GRID_STEP)
-            draw_list->AddLine(ImVec2(gridPoint0.x, gridPoint0.y + y), ImVec2(gridPoint1.x, gridPoint0.y + y), IM_COL32(200, 200, 200, 40));
-    }
-
-    
+    DotDraw(0, 0, 0.5, 50);
 
     for (int n = 0; n < points.Size; n += 2)
         draw_list->AddLine(ImVec2(origin.x + points[n].x, origin.y + points[n].y), ImVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
@@ -402,12 +405,6 @@ void Field::ShowMainWindow(bool* p_open)
     ImGui::End();
 };
 
-void Field::DrawText(ImDrawList* draw_list, int windowCenterX, int windowCenterY, float gridSpacer, int x, int y, const char* text)
-{
-    ImVec2 Textp1 = ImVec2(windowCenterX + (gridSpacer * x), windowCenterY + ((gridSpacer * -1) * y));
-    ImGui::SetWindowFontScale(gridSpacer / 5);
-    draw_list->AddText(Textp1, IM_COL32(255, 255, 255, 255), text);
-};
 
 
 
