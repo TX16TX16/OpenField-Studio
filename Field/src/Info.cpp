@@ -220,6 +220,11 @@ void Field::ShowInfoWindow(bool* p_open)
 
     ImGuiIO& io = ImGui::GetIO();
 
+
+
+
+    ImVec2 windowCenter = ImVec2((gridPoint1.x + gridPoint0.x) / 2, (gridPoint1.y + gridPoint0.y) / 2);
+
     // Put UI Elements Here
 
     ImGui::Text("OpenField Info");
@@ -230,14 +235,16 @@ void Field::ShowInfoWindow(bool* p_open)
 
     const char* testa = test1.c_str();
 
-    ImVec2 testf = ImGui::GetCursorScreenPos();
+    
+    std::string test5 = std::to_string(windowCenter.x);
 
-    std::string test2 = std::to_string(testf.x);
-
-    const char* testb = test2.c_str();
+    const char* test6 = test5.c_str();
+    
+    ImGui::Text(test6);
+    
 
     ImGui::Text(testa);
-    ImGui::Text(testb);
+    
 
     ImGui::PushItemWidth(-ImGui::GetFontSize() * 15);
     ImDrawList* draw_list = ImGui::GetWindowDrawList();

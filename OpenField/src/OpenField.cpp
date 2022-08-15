@@ -29,7 +29,7 @@ public:
 		Field::ShowToolsWindow();
 		Field::ShowInfoWindow();
 
-		ImGui::ShowDemoWindow();
+		
 
 	}
 };

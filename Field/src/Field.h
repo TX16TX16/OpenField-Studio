@@ -24,4 +24,5 @@ namespace Field
 
 } // namespace Field
 
-extern ImVec2  mouseGridCoord;
+extern ImVec2 gridPoint0;
+extern ImVec2 gridPoint1;

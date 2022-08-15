@@ -151,8 +151,8 @@ void* GFieldMainMarkerCallbackUserData = NULL;
 #define FIELD_TEMPLATE_MARKER(section)  do { if (GFieldMainMarkerCallback != NULL) GFieldMainMarkerCallback(__FILE__, __LINE__, section, GFieldMainMarkerCallbackUserData); } while (0)
 
 
-
-
+ImVec2 gridPoint0;
+ImVec2 gridPoint1;
 
 // Demonstrate most Dear ImGui features (this is big function!)
 // You may execute this function to experiment with the UI and understand what it does.
@@ -223,13 +223,13 @@ void Field::ShowMainWindow(bool* p_open)
 
     ImVec2 mouseGridCoord = ImGui::GetMousePos();
 
-    int testg = 5;
+    
     // Put UI Elements Here
-
+    
     
 
     // Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
-    ImVec2 gridPoint0 = ImGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
+    gridPoint0 = ImGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
     ImVec2 availSpace = ImGui::GetContentRegionAvail();   // Resize canvas to what's available
 
     // This is the aspect ratio 16 = x, 9 = y for a 16:9 ratio
@@ -244,7 +244,7 @@ void Field::ShowMainWindow(bool* p_open)
 
     ImVec2 availRatio = ImVec2(availSpace.x / gridRatio.x, availSpace.y / gridRatio.y);
 
-    ImVec2 gridPoint1;
+    
 
 
     if (availRatio.x < availRatio.y)
@@ -311,13 +311,13 @@ void Field::ShowMainWindow(bool* p_open)
 
     auto DotDraw = [draw_list, windowCenterX, windowCenterY, gridSpacer](int x1, int y1, float rd, int sg)
     {
-        ImVec2 Circlep1 = ImVec2(windowCenterX + (gridSpacer * x1), windowCenterY + ((gridSpacer * -1) * y1));
+        ImVec2 Circlep1 = ImVec2(windowCenterX + ((gridSpacer * 1.01) * x1), windowCenterY + ((gridSpacer * -1.01) * y1));
         float Radiusp1 = (rd * gridSpacer);
         draw_list->AddCircleFilled(Circlep1, Radiusp1, IM_COL32(255, 0, 0, 255), sg);
     };
 
     //For vh variable 0 is vertical lines and 1 is horizontal
-    auto HashDraw = [draw_list, windowCenterX, windowCenterY, gridSpacer](int x1, int y1, int x2, int y2,float sp, float th,int vh)
+    auto HashDraw = [draw_list, windowCenterX, windowCenterY, gridSpacer](int x1, int y1, int x2, int y2,float sp, float th,int vh,int r,int g,int b)
     {
         ImVec2 Hashp1 = ImVec2(windowCenterX + (gridSpacer * x1), windowCenterY + ((gridSpacer * -1) * y1));
         ImVec2 Hashp2 = ImVec2(windowCenterX + (gridSpacer * x2), windowCenterY + ((gridSpacer * -1) * y2));
@@ -325,13 +325,13 @@ void Field::ShowMainWindow(bool* p_open)
             for (int h = 0; h <= (x2 / sp) * 2; h++) 
             {
                 float x = h * (gridSpacer * sp);
-                draw_list->AddLine(ImVec2(Hashp1.x + x, Hashp1.y), ImVec2(Hashp1.x + x, Hashp2.y), IM_COL32(255, 255, 255, 255), th);
+                draw_list->AddLine(ImVec2(Hashp1.x + x, Hashp1.y), ImVec2(Hashp1.x + x, Hashp2.y), IM_COL32(r, g, b, 255), th);
             }
         if(vh == 1)
             for (int v = 0; v <= (x2 / sp) * 2; v++)
             {
                 float y = v * (gridSpacer * sp);
-                draw_list->AddLine(ImVec2(Hashp1.x, Hashp1.y + y), ImVec2(Hashp2.x, Hashp1.y + y), IM_COL32(255, 255, 255, 255), th);
+                draw_list->AddLine(ImVec2(Hashp1.x, Hashp1.y + y), ImVec2(Hashp2.x, Hashp1.y + y), IM_COL32(r, g, b, 255), th);
             }
     };
 
@@ -356,6 +356,26 @@ void Field::ShowMainWindow(bool* p_open)
 
     
 
+    
+
+    for (int h = 1; h <= 100; h += 1)
+    {
+        if (Filer::ContainsT("H", h))
+        {
+            float sp = Filer::LoadN("H", h, "sp");
+            float th = Filer::LoadN("H", h, "th");
+            int vh = Filer::LoadN("H", h, "vh");
+            int x1 = Filer::LoadN("H", h, "x1");
+            int y1 = Filer::LoadN("H", h, "y1");
+            int x2 = Filer::LoadN("H", h, "x2");
+            int y2 = Filer::LoadN("H", h, "y2");
+            int r = Filer::LoadN("H", h, "r");
+            int g = Filer::LoadN("H", h, "g");
+            int b = Filer::LoadN("H", h, "b");
+            HashDraw(x1, y1, x2, y2, sp, th, vh, r, g, b);
+        }
+    }
+    
     for (int l = 1; l <= 100; l += 1)
     {
         if (Filer::ContainsT("L", l))
@@ -369,20 +389,6 @@ void Field::ShowMainWindow(bool* p_open)
         }
     }
 
-    for (int h = 1; h <= 100; h += 1)
-    {
-        if (Filer::ContainsT("H", h))
-        {
-            float sp = Filer::LoadN("H", h, "sp");
-            float th = Filer::LoadN("H", h, "th");
-            int vh = Filer::LoadN("H", h, "vh");
-            int x1 = Filer::LoadN("H", h, "x1");
-            int y1 = Filer::LoadN("H", h, "y1");
-            int x2 = Filer::LoadN("H", h, "x2");
-            int y2 = Filer::LoadN("H", h, "y2");
-            HashDraw(x1, y1, x2, y2, sp, th, vh);
-        }
-    }
 
     for (int t = 1; t <= 100; t += 1)
     {
@@ -397,6 +403,7 @@ void Field::ShowMainWindow(bool* p_open)
     }
 
     DotDraw(0, 0, 0.5, 50);
+    
 
     for (int n = 0; n < points.Size; n += 2)
         draw_list->AddLine(ImVec2(origin.x + points[n].x, origin.y + points[n].y), ImVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
