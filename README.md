@@ -14,12 +14,12 @@ Currently supports Windows - with macOS and Linux support planned. Setup scripts
 Once you've cloned, run `scripts/Setup.bat` to generate Visual Studio 2022 solution/project files.
 
 ### 3rd party libaries
-- [Walnut](https://github.com/TheCherno/Walnut) (project forked from)
+- [Walnut](https://github.com/TheCherno/Walnut)
 - [Dear ImGui](https://github.com/ocornut/imgui)
 - [GLFW](https://github.com/glfw/glfw)
 - [stb_image](https://github.com/nothings/stb)
 - [GLM](https://github.com/g-truc/glm) (included for convenience)
-- [Nlohmann Json](https://github.com/nlohmann/json) (nuget package used)
+- [Nlohmann Json](https://github.com/nlohmann/json) (Nuget package)
 
 ### Additional
 - Walnut uses the [Roboto](https://fonts.google.com/specimen/Roboto) font ([Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0))
