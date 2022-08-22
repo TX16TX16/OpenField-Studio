@@ -1,6 +1,6 @@
 # OpenField Studio
 
-OpenField Studio is modular drill design software made for all types of bands.
+OpenField Studio is a customizable drill design software made for all types of bands.
 
 **Don't expect much of this project as it is in early development.**
 
