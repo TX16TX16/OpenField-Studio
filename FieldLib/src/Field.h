@@ -20,9 +20,11 @@ namespace Field
     void    ShowMainWindow(bool* p_open = NULL);        
     void    ShowToolsWindow(bool* p_open = NULL);
     void    ShowInfoWindow(bool* p_open = NULL);
+    void    ShowFeild2DWindow(bool* p_open = NULL);
 
 
 } // namespace Field
 
 extern ImVec2 gridPoint0;
 extern ImVec2 gridPoint1;
+extern float gridInfoSpacer;

@@ -4,12 +4,12 @@
 #endif
 
 #include "Field.h"
-#include "Filer.h"
+
 #include "imgui.h"
 #ifndef IMGUI_DISABLE
 
 // System includes
-#include <iostream>
+
 #include <ctype.h>          // toupper
 #include <limits.h>         // INT_MIN, INT_MAX
 #include <math.h>           // sqrtf, powf, cosf, sinf, floorf, ceilf
@@ -20,7 +20,7 @@
 #else
 #include <stdint.h>         // intptr_t
 #endif
-
+#include <string>
 
 // Visual Studio warnings
 #ifdef _MSC_VER
@@ -115,8 +115,6 @@ static void ShowExampleAppWindowTitles(bool* p_open);
 static void ShowExampleAppCustomRendering(bool* p_open);
 static void ShowExampleMenuFile();
 
-
-
 // Helper to display a little (?) mark which shows a tooltip when hovered.
 // In your own code you may want to display an actual icon if you are using a merged icon fonts (see docs/FONTS.md)
 static void HelpMarker(const char* desc)
@@ -143,21 +141,28 @@ static void ShowDockingDisabledMessage()
 }
 
 // Helper to wire demo markers located in code to a interactive browser
-typedef void (*FieldMainMarkerCallback)(const char* file, int line, const char* section, void* user_data);
-extern FieldMainMarkerCallback  GFieldMainMarkerCallback;
+typedef void (*FieldInfoMarkerCallback)(const char* file, int line, const char* section, void* user_data);
+extern FieldInfoMarkerCallback  GFieldInfoMarkerCallback;
 extern void* GImGuiDemoMarkerCallbackUserData;
-FieldMainMarkerCallback         GFieldMainMarkerCallback = NULL;
-void* GFieldMainMarkerCallbackUserData = NULL;
-#define FIELD_TEMPLATE_MARKER(section)  do { if (GFieldMainMarkerCallback != NULL) GFieldMainMarkerCallback(__FILE__, __LINE__, section, GFieldMainMarkerCallbackUserData); } while (0)
+FieldInfoMarkerCallback         GFieldInfoMarkerCallback = NULL;
+void* GFieldInfoMarkerCallbackUserData = NULL;
+#define FIELD_Info_MARKER(section)  do { if (GFieldInfoMarkerCallback != NULL) GFieldInfoMarkerCallback(__FILE__, __LINE__, section, GFieldInfoMarkerCallbackUserData); } while (0)
 
-
-ImVec2 gridPoint0;
-ImVec2 gridPoint1;
+//-----------------------------------------------------------------------------
+// [SECTION] Demo Window / ShowDemoWindow()
+//-----------------------------------------------------------------------------
+// - ShowDemoWindowWidgets()
+// - ShowDemoWindowLayout()
+// - ShowDemoWindowPopups()
+// - ShowDemoWindowTables()
+// - ShowDemoWindowColumns()
+// - ShowDemoWindowMisc()
+//-----------------------------------------------------------------------------
 
 // Demonstrate most Dear ImGui features (this is big function!)
 // You may execute this function to experiment with the UI and understand what it does.
 // You may then search for keywords in the code when you are interested by a specific feature.
-void Field::ShowMainWindow(bool* p_open)
+void Field::ShowInfoWindow(bool* p_open)
 {
     // Exceptionally add an extra assert here for people confused about initial Dear ImGui setup
     // Most ImGui functions would normally just crash if the context is missing.
@@ -165,12 +170,12 @@ void Field::ShowMainWindow(bool* p_open)
 
     // Demonstrate the various window flags. Typically you would just use the default!
     static bool no_titlebar = false;
-    static bool no_scrollbar = true;
+    static bool no_scrollbar = false;
     static bool no_menu = true;
     static bool no_move = false;
     static bool no_resize = false;
-    static bool no_collapse = true;
-    static bool no_close = true;
+    static bool no_collapse = false;
+    static bool no_close = false;
     static bool no_nav = false;
     static bool no_background = false;
     static bool no_bring_to_front = false;
@@ -198,13 +203,17 @@ void Field::ShowMainWindow(bool* p_open)
     ImGui::SetNextWindowSize(ImVec2(550, 680), ImGuiCond_FirstUseEver);
 
     // Main body of the Demo window starts here.
-    if (!ImGui::Begin("Main", p_open, window_flags))
+    if (!ImGui::Begin("Info", p_open, window_flags))
     {
         // Early out if the window is collapsed, as an optimization.
         ImGui::End();
         return;
     }
 
+    // Most "big" widgets share a common width settings by default. See 'Demo->Layout->Widgets Width' for details.
+
+    // e.g. Use 2/3 of the space for widgets and 1/3 for labels (right align)
+    //ImGui::PushItemWidth(-ImGui::GetWindowWidth() * 0.35f);
 
     // e.g. Leave a fixed amount of width for labels (by passing a negative value), the rest goes to widgets.
     ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
@@ -212,202 +221,162 @@ void Field::ShowMainWindow(bool* p_open)
     ImGuiIO& io = ImGui::GetIO();
 
 
+    
+
+    ImVec2 windowCenter = ImVec2((gridPoint1.x + gridPoint0.x) / 2, (gridPoint1.y + gridPoint0.y) / 2);
+    ImVec2 mousePos = ImGui::GetMousePos();
+    ImVec2 mouseGridCoord;
+
+    // Put UI Elements Here
+
+    ImGui::Text("OpenField Info");
+
+    mouseGridCoord = ImVec2((mousePos.x - windowCenter.x) / gridInfoSpacer, ((mousePos.y - windowCenter.y) / gridInfoSpacer) * -1);
+
+    int roundTo = 1;
+
+    ImVec2 mouseRoundedGrid = ImVec2(round(mouseGridCoord.x * roundTo) / roundTo, round(mouseGridCoord.y * roundTo) / roundTo);
+
+    std::string yardLine;
+    std::string leftRight;
+    if (mouseRoundedGrid.x > 0)
+        leftRight = "Right";
+    if (mouseRoundedGrid.x < 0)
+        leftRight = "Left";
+
+#pragma region MouseYardLines
+    if (mouseRoundedGrid.x >= -3.99999999) {
+        if (mouseRoundedGrid.x <= 3.99999999) {
+            yardLine = "50";
+        }
+    }
+    if (mouseRoundedGrid.x >= 4) {
+        if (mouseRoundedGrid.x <= 11.99999999) {
+            yardLine = "45";
+        }
+    }
+    if (mouseRoundedGrid.x >= 12) {
+        if (mouseRoundedGrid.x <= 19.99999999) {
+            yardLine = "40";
+        }
+    }
+    if (mouseRoundedGrid.x >= 20) {
+        if (mouseRoundedGrid.x <= 27.99999999) {
+            yardLine = "35";
+        }
+    }
+    if (mouseRoundedGrid.x >= 28) {
+        if (mouseRoundedGrid.x <= 35.99999999) {
+            yardLine = "30";
+        }
+    }
+    if (mouseRoundedGrid.x >= 36) {
+        if (mouseRoundedGrid.x <= 43.99999999) {
+            yardLine = "25";
+        }
+    }
+    if (mouseRoundedGrid.x >= 44) {
+        if (mouseRoundedGrid.x <= 51.99999999) {
+            yardLine = "20";
+        }
+    }
+    if (mouseRoundedGrid.x >= 52) {
+        if (mouseRoundedGrid.x <= 59.99999999) {
+            yardLine = "15";
+        }
+    }
+    if (mouseRoundedGrid.x >= 60) {
+        if (mouseRoundedGrid.x <= 67.99999999) {
+            yardLine = "10";
+        }
+    }
+    if (mouseRoundedGrid.x >= 68) {
+        if (mouseRoundedGrid.x <= 75.99999999) {
+            yardLine = "5";
+        }
+    }
+    if (mouseRoundedGrid.x >= 76) {
+        if (mouseRoundedGrid.x <= 84) {
+            yardLine = "0";
+        }
+    }
+
+    if (mouseRoundedGrid.x <= -4) {
+        if (mouseRoundedGrid.x >= -11.99999999) {
+            yardLine = "45";
+        }
+    }
+    if (mouseRoundedGrid.x <= -12) {
+        if (mouseRoundedGrid.x >= -19.99999999) {
+            yardLine = "40";
+        }
+    }
+    if (mouseRoundedGrid.x <= -20) {
+        if (mouseRoundedGrid.x >= -27.99999999) {
+            yardLine = "35";
+        }
+    }
+    if (mouseRoundedGrid.x <= -28) {
+        if (mouseRoundedGrid.x >= -35.99999999) {
+            yardLine = "30";
+        }
+    }
+    if (mouseRoundedGrid.x <= -36) {
+        if (mouseRoundedGrid.x >= -43.99999999) {
+            yardLine = "25";
+        }
+    }
+    if (mouseRoundedGrid.x <= -44) {
+        if (mouseRoundedGrid.x >= -51.99999999) {
+            yardLine = "20";
+        }
+    }
+    if (mouseRoundedGrid.x <= -52) {
+        if (mouseRoundedGrid.x >= -59.99999999) {
+            yardLine = "15";
+        }
+    }
+    if (mouseRoundedGrid.x <= -60) {
+        if (mouseRoundedGrid.x >= -67.99999999) {
+            yardLine = "10";
+        }
+    }
+    if (mouseRoundedGrid.x <= -68) {
+        if (mouseRoundedGrid.x >= -75.99999999) {
+            yardLine = "5";
+        }
+    }
+    if (mouseRoundedGrid.x <= -76) {
+        if (mouseRoundedGrid.x >= -84) {
+            yardLine = "0";
+        }
+    }
+#pragma endregion
+    const char* lRYardLine = leftRight.c_str();
+    const char* mouseYardLine = yardLine.c_str();
+
+    if (gridPoint0.x <= mousePos.x) 
+    {
+        if (gridPoint0.y <= mousePos.y) 
+        {
+            if (gridPoint1.x >= mousePos.x)
+            {
+                if (gridPoint1.y >= mousePos.y)
+                {
+                    ImGui::Text(lRYardLine);
+                    ImGui::SameLine();
+                    ImGui::Text(mouseYardLine);
+                }
+            }
+        }
+    }
+
+    
+    
 
     ImGui::PushItemWidth(-ImGui::GetFontSize() * 15);
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
-  
-    static ImVector<ImVec2> points;
-    static ImVec2 scrolling(0.0f, 0.0f);
-    static bool opt_enable_grid = true;
-    static bool opt_enable_context_menu = true;
 
-    ImVec2 mouseGridCoord = ImGui::GetMousePos();
-
-    
-    // Put UI Elements Here
-    
-    
-
-    // Using InvisibleButton() as a convenience 1) it will advance the layout cursor and 2) allows us to use IsItemHovered()/IsItemActive()
-    gridPoint0 = ImGui::GetCursorScreenPos();      // ImDrawList API uses screen coordinates!
-    ImVec2 availSpace = ImGui::GetContentRegionAvail();   // Resize canvas to what's available
-
-    // This is the aspect ratio 16 = x, 9 = y for a 16:9 ratio
-    ImVec2 gridRatio;
-    gridRatio.x = 17.6;
-    gridRatio.y = 9.2;
-
-    if (availSpace.x < 400.0f) 
-        availSpace.x = 400.0f;
-    if (availSpace.y < 200.0f)
-        availSpace.y = 200.0f;
-
-    ImVec2 availRatio = ImVec2(availSpace.x / gridRatio.x, availSpace.y / gridRatio.y);
-
-    
-
-
-    if (availRatio.x < availRatio.y)
-        gridPoint1 = ImVec2(gridPoint0.x + availSpace.x, (gridPoint0.y + ((availSpace.x / gridRatio.x) * gridRatio.y)));
-    else
-        gridPoint1 = ImVec2((gridPoint0.x + ((availSpace.y / gridRatio.y) * gridRatio.x)), gridPoint0.y + availSpace.y);
-
-
-
-    gridPoint0 = ImVec2(gridPoint0.x + ((availSpace.x - (gridPoint1.x - gridPoint0.x)) / 2), gridPoint0.y);
-
-    if (availRatio.x < availRatio.y)
-        gridPoint1 = ImVec2(gridPoint0.x + availSpace.x, (gridPoint0.y + ((availSpace.x / gridRatio.x) * gridRatio.y)));
-    else
-        gridPoint1 = ImVec2((gridPoint0.x + ((availSpace.y / gridRatio.y) * gridRatio.x)), gridPoint0.y + availSpace.y);
-
-
-
-    // Draw border and background color
-    draw_list->AddRectFilled(gridPoint0, (gridPoint1), IM_COL32(50, 50, 50, 255));
-    draw_list->AddRect(gridPoint0, gridPoint1, IM_COL32(255, 255, 255, 255));
-
-
-
-
-    // This will catch our interactions
-    ImGui::InvisibleButton("canvas", availSpace, ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-    const bool is_hovered = ImGui::IsItemHovered(); // Hovered
-    const bool is_active = ImGui::IsItemActive();   // Held
-    const ImVec2 origin(gridPoint0.x + scrolling.x, gridPoint0.y + scrolling.y); // Lock scrolled origin
-    const ImVec2 mouse_pos_in_canvas(io.MousePos.x - origin.x, io.MousePos.y - origin.y);
-
-    
-    //Decides which way to shrink the grid
-    //The divider is a multiplier of how many squares wanted (16:9 ratio divided by 10 would be 160:90 squares)
-    float gridSpacer;
-    int gridDivider = 10;
-
-    if (availRatio.x < availRatio.y)
-        gridSpacer = availRatio.x / gridDivider;
-    else
-        gridSpacer = availRatio.y / gridDivider;
-
-    // Draw grid + all lines in the canvas
-    draw_list->PushClipRect(gridPoint0, gridPoint1, true);
-
-
-
-    int windowCenterX;
-    int windowCenterY;
-
-    windowCenterX = (gridPoint1.x + gridPoint0.x) / 2;
-    windowCenterY = (gridPoint1.y + gridPoint0.y) / 2;
-
-    ImVec2 Fiftyp1 = ImVec2(windowCenterX, gridPoint0.y);
-    ImVec2 Fiftyp2 = ImVec2(windowCenterX, gridPoint1.y);
-
-    auto LineDraw = [draw_list, windowCenterX, windowCenterY, gridSpacer](int x1, int y1, int x2, int y2, float th)
-    {
-        ImVec2 Linep1 = ImVec2(windowCenterX + (gridSpacer * x1), windowCenterY + ((gridSpacer * -1) * y1));
-        ImVec2 Linep2 = ImVec2(windowCenterX + (gridSpacer * x2), windowCenterY + ((gridSpacer * -1) * y2));
-        draw_list->AddLine(Linep1, Linep2, IM_COL32(255, 255, 255, 255), th);
-    };
-
-    auto DotDraw = [draw_list, windowCenterX, windowCenterY, gridSpacer](int x1, int y1, float rd, int sg)
-    {
-        ImVec2 Circlep1 = ImVec2(windowCenterX + ((gridSpacer * 1.01) * x1), windowCenterY + ((gridSpacer * -1.01) * y1));
-        float Radiusp1 = (rd * gridSpacer);
-        draw_list->AddCircleFilled(Circlep1, Radiusp1, IM_COL32(255, 0, 0, 255), sg);
-    };
-
-    //For vh variable 0 is vertical lines and 1 is horizontal
-    auto HashDraw = [draw_list, windowCenterX, windowCenterY, gridSpacer](int x1, int y1, int x2, int y2,float sp, float th,int vh,int r,int g,int b)
-    {
-        ImVec2 Hashp1 = ImVec2(windowCenterX + (gridSpacer * x1), windowCenterY + ((gridSpacer * -1) * y1));
-        ImVec2 Hashp2 = ImVec2(windowCenterX + (gridSpacer * x2), windowCenterY + ((gridSpacer * -1) * y2));
-        if(vh == 0)
-            for (int h = 0; h <= (x2 / sp) * 2; h++) 
-            {
-                float x = h * (gridSpacer * sp);
-                draw_list->AddLine(ImVec2(Hashp1.x + x, Hashp1.y), ImVec2(Hashp1.x + x, Hashp2.y), IM_COL32(r, g, b, 255), th);
-            }
-        if(vh == 1)
-            for (int v = 0; v <= (x2 / sp) * 2; v++)
-            {
-                float y = v * (gridSpacer * sp);
-                draw_list->AddLine(ImVec2(Hashp1.x, Hashp1.y + y), ImVec2(Hashp2.x, Hashp1.y + y), IM_COL32(r, g, b, 255), th);
-            }
-    };
-
-    auto TextDraw = [draw_list, windowCenterX, windowCenterY, gridSpacer](int x, int y,const char * text)
-    {
-        ImVec2 Textp1 = ImVec2(windowCenterX + (gridSpacer * x), windowCenterY + ((gridSpacer * -1) * y));
-        ImGui::SetWindowFontScale(gridSpacer/4.5);
-        draw_list->AddText(Textp1, IM_COL32(255, 255, 255, 255),text);
-        ImGui::SetWindowFontScale(1);
-    };
-
-    if (opt_enable_grid)
-    {
-        const float GRID_STEP = gridSpacer;
-        for (float x = fmodf(scrolling.x, GRID_STEP); x < availSpace.x; x += GRID_STEP)
-            draw_list->AddLine(ImVec2(gridPoint0.x + x, gridPoint0.y), ImVec2(gridPoint0.x + x, gridPoint1.y), IM_COL32(200, 200, 200, 40));
-            
-
-        for (float y = fmodf(scrolling.y, GRID_STEP); y < availSpace.y; y += GRID_STEP)
-            draw_list->AddLine(ImVec2(gridPoint0.x, gridPoint0.y + y), ImVec2(gridPoint1.x, gridPoint0.y + y), IM_COL32(200, 200, 200, 40));
-    }
-
-    
-
-    
-
-    for (int h = 1; h <= 100; h += 1)
-    {
-        if (Filer::ContainsT("H", h))
-        {
-            float sp = Filer::LoadN("H", h, "sp");
-            float th = Filer::LoadN("H", h, "th");
-            int vh = Filer::LoadN("H", h, "vh");
-            int x1 = Filer::LoadN("H", h, "x1");
-            int y1 = Filer::LoadN("H", h, "y1");
-            int x2 = Filer::LoadN("H", h, "x2");
-            int y2 = Filer::LoadN("H", h, "y2");
-            int r = Filer::LoadN("H", h, "r");
-            int g = Filer::LoadN("H", h, "g");
-            int b = Filer::LoadN("H", h, "b");
-            HashDraw(x1, y1, x2, y2, sp, th, vh, r, g, b);
-        }
-    }
-    
-    for (int l = 1; l <= 100; l += 1)
-    {
-        if (Filer::ContainsT("L", l))
-        {
-            float th = Filer::LoadN("L", l, "th");
-            int x1 = Filer::LoadN("L", l, "x1");
-            int y1 = Filer::LoadN("L", l, "y1");
-            int x2 = Filer::LoadN("L", l, "x2");
-            int y2 = Filer::LoadN("L", l, "y2");
-            LineDraw(x1, y1, x2, y2, th);
-        }
-    }
-
-
-    for (int t = 1; t <= 100; t += 1)
-    {
-        if (Filer::ContainsT("T", t))
-        {
-            int x = Filer::LoadN("T", t, "x");
-            int y = Filer::LoadN("T", t, "y");
-            std::string t1 = Filer::LoadS("T", t, "t");
-            const char* t2 = t1.c_str();
-            TextDraw(x, y, t2);
-        }
-    }
-
-    DotDraw(0, 0, 0.5, 50);
-    
-
-    for (int n = 0; n < points.Size; n += 2)
-        draw_list->AddLine(ImVec2(origin.x + points[n].x, origin.y + points[n].y), ImVec2(origin.x + points[n + 1].x, origin.y + points[n + 1].y), IM_COL32(255, 255, 0, 255), 2.0f);
-    draw_list->PopClipRect();
 
     ImGui::End();
 };
@@ -415,13 +384,11 @@ void Field::ShowMainWindow(bool* p_open)
 
 
 
-
-// End of code
+// End of Demo code
 #else
 
 void ImGui::ShowAboutWindow(bool*) {}
-void Field::ShowMainWindow(bool*) {}
-void Field::LineDraw(int x1, int y1, int x2, int y2, float th)
+void Field::ShowInfoWindow(bool*) {}
 void ImGui::ShowUserGuide() {}
 void ImGui::ShowStyleEditor(ImGuiStyle*) {}
 

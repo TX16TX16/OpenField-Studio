@@ -3,6 +3,7 @@
 
 #include "Field.h"
 #include "Filer.h"
+#include "implot.h"
 
 #include <iostream>
 
@@ -25,10 +26,14 @@ public:
 
 
 		
-		Field::ShowMainWindow();
+		//Field::ShowMainWindow();
 		Field::ShowToolsWindow();
 		Field::ShowInfoWindow();
+		Field::ShowFeild2DWindow();
 
+
+		//ImGui::ShowDemoWindow();
+		ImPlot::ShowDemoWindow();
 		
 
 	}
